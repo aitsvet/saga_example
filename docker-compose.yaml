@@ -1,0 +1,190 @@
+version: '3'
+services:
+
+  gateway:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: /gateway
+    ports:
+      - "8081:8081"
+      - "50051:50051"
+    environment:
+      - RABBITMQ_HOST=amqp://rabbitmq:5672
+      - KAFKA_BROKERS=kafka:29092
+      - CGO_ENABLED=1
+    restart: on-failure
+    depends_on:
+      - rabbitmq
+      - kafka
+
+  ads:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: /ad
+    environment:
+      - DB_HOST=ad_db
+      - DB_PORT=5432
+      - DB_NAME=ad
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_SSLMODE=disable
+      - RABBITMQ_HOST=amqp://rabbitmq:5672
+      - KAFKA_BROKERS=kafka:29092
+    restart: on-failure
+    depends_on:
+      - ad_db
+      - rabbitmq
+      - kafka
+
+  orders:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: /order
+    environment:
+      - DB_HOST=order_db
+      - DB_PORT=5432
+      - DB_NAME=order
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_SSLMODE=disable
+      - RABBITMQ_HOST=amqp://rabbitmq:5672
+      - KAFKA_BROKERS=kafka:29092
+    restart: on-failure
+    depends_on:
+      - order_db
+      - rabbitmq
+      - kafka
+
+  shipments:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: /shipment
+    environment:
+      - DB_HOST=shipment_db
+      - DB_PORT=5432
+      - DB_NAME=shipment
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_SSLMODE=disable
+      - RABBITMQ_HOST=amqp://rabbitmq:5672
+      - KAFKA_BROKERS=kafka:29092
+    restart: on-failure
+    depends_on:
+      - shipment_db
+      - rabbitmq
+      - kafka
+
+  dictionaries:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: /dictionary
+    environment:
+      - DB_HOST=dictionary_db
+      - DB_PORT=5432
+      - DB_NAME=dictionary
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_SSLMODE=disable
+      - RABBITMQ_HOST=amqp://rabbitmq:5672
+      - KAFKA_BROKERS=kafka:29092
+    restart: on-failure
+    depends_on:
+      - dictionary_db
+      - rabbitmq
+      - kafka
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: 'rabbitmq'
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:15672"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+    environment:
+      - "RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log [{file,[{file,\"/var/log/rabbitmq/error.log\"},{level,error},{date,\"$D0\"},{size,10485760},{count,3}]},{console,[{enabled,false}]}]"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_LOG4J_ROOT_LOGLEVEL: ERROR
+      ZOOKEEPER_LOG4J_LOGGERS: org.apache.zookeeper=ERROR,kafka.zookeeper=ERROR,state.change.logger=ERROR
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    restart: unless-stopped
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,COMPOSE:PLAINTEXT'
+      KAFKA_LISTENERS: 'INTERNAL://kafka:29092,CONTROLLER://kafka:29093,COMPOSE://:9092'
+      KAFKA_ADVERTISED_LISTENERS: 'INTERNAL://kafka:29092,COMPOSE://kafka:9092'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'INTERNAL'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      CLUSTER_ID: 'ciWo7IWazngRchmPES6q5A=='
+      KAFKA_LOG_DIRS: '/var/lib/kafka/data'
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      KAFKA_LOG4J_ROOT_LOGLEVEL: ERROR
+      KAFKA_LOG4J_LOGGERS: org.apache.kafka=ERROR,kafka=ERROR,kafka.cluster=ERROR,kafka.controller=ERROR,kafka.coordinator=ERROR,kafka.log=ERROR,kafka.server=ERROR,state.change.logger=ERROR
+
+  ad_db:
+    image: postgres
+    command:
+      - "postgres"
+      - "-c"
+      - "listen_addresses=*"
+    environment:
+      POSTGRES_DB: ad
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+
+  order_db:
+    image: postgres
+    command:
+      - "postgres"
+      - "-c"
+      - "listen_addresses=*"
+    environment:
+      POSTGRES_DB: order
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+
+  shipment_db:
+    image: postgres
+    command:
+      - "postgres"
+      - "-c"
+      - "listen_addresses=*"
+    environment:
+      POSTGRES_DB: shipment
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+
+  dictionary_db:
+    image: postgres
+    command:
+      - "postgres"
+      - "-c"
+      - "listen_addresses=*"
+    environment:
+      POSTGRES_DB: dictionary
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password

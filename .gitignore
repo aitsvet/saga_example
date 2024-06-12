@@ -1,0 +1,4 @@
+api/google
+api/protoc-gen-openapiv2
+*.swagger.json
+.idea/

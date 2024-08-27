@@ -1,5 +1,5 @@
 all: api/google
-	docker build --cache-from golang:1.22-alpine -t protos -f Dockerfile.proto
+	docker build --cache-from golang:1.22-alpine -t protos -f Dockerfile.proto .
 	docker run --pull=missing -v `pwd`:/app protos
 	sudo chown $$USER:$$GROUP -R pkg
 	go mod tidy

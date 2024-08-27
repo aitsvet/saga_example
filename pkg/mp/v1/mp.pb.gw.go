@@ -31,6 +31,58 @@ var _ = runtime.String
 var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
+func request_Marketplace_Deposit_0(ctx context.Context, marshaler runtime.Marshaler, client MarketplaceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq DepositRequest
+	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.Deposit(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_Marketplace_Deposit_0(ctx context.Context, marshaler runtime.Marshaler, server MarketplaceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq DepositRequest
+	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.Deposit(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
+func request_Marketplace_Balance_0(ctx context.Context, marshaler runtime.Marshaler, client MarketplaceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq BalanceRequest
+	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.Balance(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_Marketplace_Balance_0(ctx context.Context, marshaler runtime.Marshaler, server MarketplaceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq BalanceRequest
+	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.Balance(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 func request_Marketplace_CreateAd_0(ctx context.Context, marshaler runtime.Marshaler, client MarketplaceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq AdRequest
 	var metadata runtime.ServerMetadata
@@ -173,13 +225,13 @@ func request_Marketplace_ListOrders_0(ctx context.Context, marshaler runtime.Mar
 
 }
 
-func request_Marketplace_Ship_0(ctx context.Context, marshaler runtime.Marshaler, client MarketplaceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ShipmentRequest
-	var metadata runtime.ServerMetadata
+var (
+	filter_Marketplace_Confirm_0 = &utilities.DoubleArray{Encoding: map[string]int{"order_id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+)
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
+func request_Marketplace_Confirm_0(ctx context.Context, marshaler runtime.Marshaler, client MarketplaceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq DecisionRequest
+	var metadata runtime.ServerMetadata
 
 	var (
 		val string
@@ -198,18 +250,21 @@ func request_Marketplace_Ship_0(ctx context.Context, marshaler runtime.Marshaler
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "order_id", err)
 	}
 
-	msg, err := client.Ship(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Marketplace_Confirm_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.Confirm(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_Marketplace_Ship_0(ctx context.Context, marshaler runtime.Marshaler, server MarketplaceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ShipmentRequest
+func local_request_Marketplace_Confirm_0(ctx context.Context, marshaler runtime.Marshaler, server MarketplaceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq DecisionRequest
 	var metadata runtime.ServerMetadata
-
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
 
 	var (
 		val string
@@ -228,46 +283,58 @@ func local_request_Marketplace_Ship_0(ctx context.Context, marshaler runtime.Mar
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "order_id", err)
 	}
 
-	msg, err := server.Ship(ctx, &protoReq)
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Marketplace_Confirm_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.Confirm(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
 var (
-	filter_Marketplace_ListShipments_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+	filter_Marketplace_Decline_0 = &utilities.DoubleArray{Encoding: map[string]int{"order_id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 )
 
-func request_Marketplace_ListShipments_0(ctx context.Context, marshaler runtime.Marshaler, client MarketplaceClient, req *http.Request, pathParams map[string]string) (Marketplace_ListShipmentsClient, runtime.ServerMetadata, error) {
-	var protoReq ListShipmentsRequest
+func request_Marketplace_Decline_0(ctx context.Context, marshaler runtime.Marshaler, client MarketplaceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq DecisionRequest
 	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["order_id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "order_id")
+	}
+
+	protoReq.OrderId, err = runtime.Uint64(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "order_id", err)
+	}
 
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Marketplace_ListShipments_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Marketplace_Decline_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	stream, err := client.ListShipments(ctx, &protoReq)
-	if err != nil {
-		return nil, metadata, err
-	}
-	header, err := stream.Header()
-	if err != nil {
-		return nil, metadata, err
-	}
-	metadata.HeaderMD = header
-	return stream, metadata, nil
+	msg, err := client.Decline(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
 
 }
 
-func request_Marketplace_Receive_0(ctx context.Context, marshaler runtime.Marshaler, client MarketplaceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq DeliveryRequest
+func local_request_Marketplace_Decline_0(ctx context.Context, marshaler runtime.Marshaler, server MarketplaceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq DecisionRequest
 	var metadata runtime.ServerMetadata
-
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
 
 	var (
 		val string
@@ -276,65 +343,24 @@ func request_Marketplace_Receive_0(ctx context.Context, marshaler runtime.Marsha
 		_   = err
 	)
 
-	val, ok = pathParams["shipment_id"]
+	val, ok = pathParams["order_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "shipment_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "order_id")
 	}
 
-	protoReq.ShipmentId, err = runtime.Uint64(val)
+	protoReq.OrderId, err = runtime.Uint64(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "shipment_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "order_id", err)
 	}
 
-	msg, err := client.Receive(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return msg, metadata, err
-
-}
-
-func local_request_Marketplace_Receive_0(ctx context.Context, marshaler runtime.Marshaler, server MarketplaceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq DeliveryRequest
-	var metadata runtime.ServerMetadata
-
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Marketplace_Decline_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["shipment_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "shipment_id")
-	}
-
-	protoReq.ShipmentId, err = runtime.Uint64(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "shipment_id", err)
-	}
-
-	msg, err := server.Receive(ctx, &protoReq)
-	return msg, metadata, err
-
-}
-
-func request_Marketplace_ListStatuses_0(ctx context.Context, marshaler runtime.Marshaler, client MarketplaceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq Empty
-	var metadata runtime.ServerMetadata
-
-	msg, err := client.ListStatuses(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return msg, metadata, err
-
-}
-
-func local_request_Marketplace_ListStatuses_0(ctx context.Context, marshaler runtime.Marshaler, server MarketplaceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq Empty
-	var metadata runtime.ServerMetadata
-
-	msg, err := server.ListStatuses(ctx, &protoReq)
+	msg, err := server.Decline(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -343,7 +369,58 @@ func local_request_Marketplace_ListStatuses_0(ctx context.Context, marshaler run
 // UnaryRPC     :call MarketplaceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterMarketplaceHandlerFromEndpoint instead.
+// GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
 func RegisterMarketplaceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server MarketplaceServer) error {
+
+	mux.Handle("POST", pattern_Marketplace_Deposit_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/marketplace.Marketplace/Deposit", runtime.WithHTTPPathPattern("/v1/deposit"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_Marketplace_Deposit_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_Marketplace_Deposit_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("POST", pattern_Marketplace_Balance_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/marketplace.Marketplace/Balance", runtime.WithHTTPPathPattern("/v1/balance"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_Marketplace_Balance_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_Marketplace_Balance_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
 
 	mux.Handle("POST", pattern_Marketplace_CreateAd_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -409,7 +486,7 @@ func RegisterMarketplaceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		return
 	})
 
-	mux.Handle("POST", pattern_Marketplace_Ship_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Marketplace_Confirm_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -417,12 +494,12 @@ func RegisterMarketplaceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/marketplace.Marketplace/Ship", runtime.WithHTTPPathPattern("/v1/orders/{order_id}/send"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/marketplace.Marketplace/Confirm", runtime.WithHTTPPathPattern("/v1/orders/{order_id}/confirm"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Marketplace_Ship_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Marketplace_Confirm_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -430,18 +507,11 @@ func RegisterMarketplaceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 			return
 		}
 
-		forward_Marketplace_Ship_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Marketplace_Confirm_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_Marketplace_ListShipments_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		err := status.Error(codes.Unimplemented, "streaming calls are not yet supported in the in-process transport")
-		_, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-		return
-	})
-
-	mux.Handle("POST", pattern_Marketplace_Receive_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Marketplace_Decline_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -449,12 +519,12 @@ func RegisterMarketplaceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/marketplace.Marketplace/Receive", runtime.WithHTTPPathPattern("/v1/shipments/{shipment_id}/receive"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/marketplace.Marketplace/Decline", runtime.WithHTTPPathPattern("/v1/orders/{order_id}/decline"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Marketplace_Receive_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Marketplace_Decline_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -462,32 +532,7 @@ func RegisterMarketplaceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 			return
 		}
 
-		forward_Marketplace_Receive_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
-	mux.Handle("GET", pattern_Marketplace_ListStatuses_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		var stream runtime.ServerTransportStream
-		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/marketplace.Marketplace/ListStatuses", runtime.WithHTTPPathPattern("/v1/statuses"))
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := local_request_Marketplace_ListStatuses_0(annotatedContext, inboundMarshaler, server, req, pathParams)
-		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
-		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
-		if err != nil {
-			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_Marketplace_ListStatuses_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Marketplace_Decline_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -529,8 +574,52 @@ func RegisterMarketplaceHandler(ctx context.Context, mux *runtime.ServeMux, conn
 // to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "MarketplaceClient".
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "MarketplaceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
-// "MarketplaceClient" to call the correct interceptors.
+// "MarketplaceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
 func RegisterMarketplaceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client MarketplaceClient) error {
+
+	mux.Handle("POST", pattern_Marketplace_Deposit_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/marketplace.Marketplace/Deposit", runtime.WithHTTPPathPattern("/v1/deposit"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_Marketplace_Deposit_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_Marketplace_Deposit_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("POST", pattern_Marketplace_Balance_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/marketplace.Marketplace/Balance", runtime.WithHTTPPathPattern("/v1/balance"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_Marketplace_Balance_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_Marketplace_Balance_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
 
 	mux.Handle("POST", pattern_Marketplace_CreateAd_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -620,91 +709,47 @@ func RegisterMarketplaceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 
 	})
 
-	mux.Handle("POST", pattern_Marketplace_Ship_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Marketplace_Confirm_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/marketplace.Marketplace/Ship", runtime.WithHTTPPathPattern("/v1/orders/{order_id}/send"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/marketplace.Marketplace/Confirm", runtime.WithHTTPPathPattern("/v1/orders/{order_id}/confirm"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Marketplace_Ship_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Marketplace_Confirm_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Marketplace_Ship_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Marketplace_Confirm_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_Marketplace_ListShipments_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Marketplace_Decline_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/marketplace.Marketplace/ListShipments", runtime.WithHTTPPathPattern("/v1/shipments"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/marketplace.Marketplace/Decline", runtime.WithHTTPPathPattern("/v1/orders/{order_id}/decline"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Marketplace_ListShipments_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Marketplace_Decline_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Marketplace_ListShipments_0(annotatedContext, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
-
-	})
-
-	mux.Handle("POST", pattern_Marketplace_Receive_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/marketplace.Marketplace/Receive", runtime.WithHTTPPathPattern("/v1/shipments/{shipment_id}/receive"))
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_Marketplace_Receive_0(annotatedContext, inboundMarshaler, client, req, pathParams)
-		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
-		if err != nil {
-			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_Marketplace_Receive_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
-	mux.Handle("GET", pattern_Marketplace_ListStatuses_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/marketplace.Marketplace/ListStatuses", runtime.WithHTTPPathPattern("/v1/statuses"))
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_Marketplace_ListStatuses_0(annotatedContext, inboundMarshaler, client, req, pathParams)
-		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
-		if err != nil {
-			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_Marketplace_ListStatuses_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Marketplace_Decline_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -712,6 +757,10 @@ func RegisterMarketplaceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 }
 
 var (
+	pattern_Marketplace_Deposit_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "deposit"}, ""))
+
+	pattern_Marketplace_Balance_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "balance"}, ""))
+
 	pattern_Marketplace_CreateAd_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "ad"}, ""))
 
 	pattern_Marketplace_ListAds_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "ads"}, ""))
@@ -720,16 +769,16 @@ var (
 
 	pattern_Marketplace_ListOrders_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "orders"}, ""))
 
-	pattern_Marketplace_Ship_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "orders", "order_id", "send"}, ""))
+	pattern_Marketplace_Confirm_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "orders", "order_id", "confirm"}, ""))
 
-	pattern_Marketplace_ListShipments_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "shipments"}, ""))
-
-	pattern_Marketplace_Receive_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "shipments", "shipment_id", "receive"}, ""))
-
-	pattern_Marketplace_ListStatuses_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "statuses"}, ""))
+	pattern_Marketplace_Decline_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "orders", "order_id", "decline"}, ""))
 )
 
 var (
+	forward_Marketplace_Deposit_0 = runtime.ForwardResponseMessage
+
+	forward_Marketplace_Balance_0 = runtime.ForwardResponseMessage
+
 	forward_Marketplace_CreateAd_0 = runtime.ForwardResponseMessage
 
 	forward_Marketplace_ListAds_0 = runtime.ForwardResponseStream
@@ -738,11 +787,7 @@ var (
 
 	forward_Marketplace_ListOrders_0 = runtime.ForwardResponseStream
 
-	forward_Marketplace_Ship_0 = runtime.ForwardResponseMessage
+	forward_Marketplace_Confirm_0 = runtime.ForwardResponseMessage
 
-	forward_Marketplace_ListShipments_0 = runtime.ForwardResponseStream
-
-	forward_Marketplace_Receive_0 = runtime.ForwardResponseMessage
-
-	forward_Marketplace_ListStatuses_0 = runtime.ForwardResponseMessage
+	forward_Marketplace_Decline_0 = runtime.ForwardResponseMessage
 )
